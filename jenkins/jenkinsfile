@@ -9,15 +9,29 @@ pipeline {
                     reuseNode true
                     args '-e GOCACHE=/tmp/go-cache -e GOPATH=/tmp/gopath' // used for caching the go modules and dependencies to speed up the tests               
                 }
-            }
+            } 
             steps {
                 dir('bugtracker-backend') {
-                    sh 'go test -v ./... 2>&1| go-junit-report > test-results.xml' // run the tests and generate a junit report
+                    sh '''
+                    go test -v ./... 2>&1| go-junit-report > test-results.xml 
+
+                    # generate the coverage report
+                    go test -coverprofile=coverage.out -covermode=atomic ./...
+                    go tool cover -html=coverage.out -o coverage.html
+
+                    mkdir -p reports
+                    mv coverage.html reports/
+                    '''
                 }
             }
             post { 
                 always {
                     junit 'bugtracker-backend/test-results.xml' // publish the test results in the jenkins dashboard
+                    publishHTML target: [
+                    reportDir: 'bugtracker-backend/reports',
+                    reportFiles: 'coverage.html',
+                    reportName: 'Backend Coverage Report',
+                ]
                 }
             }
         }
