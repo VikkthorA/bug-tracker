@@ -32,6 +32,11 @@ pipeline {
                     npm test
                     '''
                 }
+                post { // post is used for actions that should be executed after the steps are completed, regardless of whether they succeed or fail
+                    always {
+                        junit 'bugtracker-frontend/test-results.xml' // publish the test results in the jenkins dashboard
+                    }
+                }
             }
         }
     }
