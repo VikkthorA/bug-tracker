@@ -8,11 +8,10 @@ pipeline {
                     image 'snakee/golang-junit:1.21' // what it does is to run the tests and generate a junit report without the need to install go and junit in the jenkins agent
                     reuseNode true
                     args '-e GOCACHE=/tmp/go-cache -e GOPATH=/tmp/gopath' // used for caching the go modules and dependencies to speed up the tests               
-                    }
+                }
             }
             steps {
-                dir('bugtracker-backend')
-                {
+                dir('bugtracker-backend') {
                     sh 'go test -v ./...'
                 }
             }
@@ -25,17 +24,16 @@ pipeline {
                 }
             }
             steps {
-                dir('bugtracker-frontend')
-                {
+                dir('bugtracker-frontend') {
                     sh '''
                     npm ci
                     npm test
                     '''
                 }
-                post { // post is used for actions that should be executed after the steps are completed, regardless of whether they succeed or fail
-                    always {
-                        junit 'bugtracker-frontend/test-results.xml' // publish the test results in the jenkins dashboard
-                    }
+            }
+            post { // post is used for actions that should be executed after the steps are completed, regardless of whether they succeed or fail
+                always {
+                    junit 'bugtracker-frontend/test-results.xml' // publish the test results in the jenkins dashboard
                 }
             }
         }
