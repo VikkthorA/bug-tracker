@@ -47,12 +47,19 @@ pipeline {
                     sh '''
                     npm ci
                     npm test
+                    mkdir -p reports
+                    mv coverage reports/
                     '''
                 }
             }
             post { // post is used for actions that should be executed after the steps are completed, regardless of whether they succeed or fail
                 always {
                     junit 'bugtracker-frontend/test-results.xml' // publish the test results in the jenkins dashboard
+                    publishHTML target: [
+                        reportDir: 'bugtracker-frontend/reports/coverage',
+                        reportFiles: 'index.html',
+                        reportName: 'Frontend Coverage Report',
+                    ]
                 }
             }
         }
