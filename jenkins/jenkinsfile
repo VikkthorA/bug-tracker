@@ -7,12 +7,30 @@ pipeline {
                 docker {
                     image 'snakee/golang-junit:1.21' // what it does is to run the tests and generate a junit report without the need to install go and junit in the jenkins agent
                     reuseNode true
-                    args '-e GOCACHE=/tmp/go-cache -e GOPATH=/tmp/gopath'                }
+                    args '-e GOCACHE=/tmp/go-cache -e GOPATH=/tmp/gopath' // used for caching the go modules and dependencies to speed up the tests               
+                    }
             }
             steps {
                 dir('bugtracker-backend')
                 {
                     sh 'go test -v ./...'
+                }
+            }
+        }
+        stage('Unit Tests - Frontend') {
+            agent {
+                docker {
+                    image 'node:20-alpine' // what it does is to run the tests and generate a junit report without the need to install node and npm in the jenkins agent
+                    reuseNode true
+                }
+            }
+            steps {
+                dir('bugtracker-frontend')
+                {
+                    sh '''
+                    npm ci
+                    npm test
+                    '''
                 }
             }
         }
