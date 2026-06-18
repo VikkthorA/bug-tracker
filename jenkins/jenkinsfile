@@ -12,7 +12,12 @@ pipeline {
             }
             steps {
                 dir('bugtracker-backend') {
-                    sh 'go test -v ./...'
+                    sh 'go test -v ./... 2>&1| go-junit-report > test-results.xml' // run the tests and generate a junit report
+                }
+            }
+            post { 
+                always {
+                    junit 'bugtracker-backend/test-results.xml' // publish the test results in the jenkins dashboard
                 }
             }
         }
