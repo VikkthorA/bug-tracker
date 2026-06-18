@@ -2,11 +2,18 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Unit Tests - Backend') {
+            agent {
+                docker {
+                    image 'snakee/golang-junit:1.21' // what it does is to run the tests and generate a junit report without the need to install go and junit in the jenkins agent
+                    reuseNode true
+                }
+            }
             steps {
-                echo 'Hello World'
-                sh  'echo "Hello Jenskins"'
-                sh 'date'
+                dir('bugtracker-backend')
+                {
+                    sh 'go test -v .//...'
+                }
             }
         }
     }
