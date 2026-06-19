@@ -135,9 +135,9 @@ pipeline {
         stage('Performance tests'){
             agent {
                 docker {
-                    image 'grafana/k6:lateset'
+                    image 'grafana/k6:latest'
                     reuseNode true
-                    args '-network=host -u root -entrypoint=""' // run the container with the host network to be able to access the backend and frontend services, and run it as root to be able to write the test results in the workspace
+                    args '--network=host -u root --entrypoint=""' // run the container with the host network to be able to access the backend and frontend services, and run it as root to be able to write the test results in the workspace
                 }
             }
             steps {
@@ -153,6 +153,7 @@ pipeline {
                         reportName: 'Performance Tests Report',
                     ]
                 }
+            }
         }
     }
     post {
@@ -161,3 +162,4 @@ pipeline {
         }
     }
 }
+
