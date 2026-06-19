@@ -89,11 +89,21 @@ pipeline {
                 }
             }
             steps {
-                dir('api-tests') {
+                dir('tests-api') {
                     sh 'npx wait-port http://localhost:8080/api/health -t 30000' // wait for the backend to be up and running before running the tests
                     
                     sh 'npm ci'
                     sh 'npx playwright test'
+                }
+            }
+            post {
+                always {
+                    junit  'tests-api/test-results.xml' // publish the test results in the jenkins dashboard
+                    publishHTML target: [
+                        reportDir: 'tests-api/playwright-report',
+                        reportFiles: 'index.html',
+                        reportName: 'API Tests Report',
+                    ]
                 }
             }
         }
