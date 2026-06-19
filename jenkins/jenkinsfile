@@ -132,6 +132,28 @@ pipeline {
                 }
             }
         }
+        stage('Performance tests'){
+            agent {
+                docker {
+                    image 'grafana/k6:lateset'
+                    reuseNode true
+                    args '-network=host -u root -entrypoint=""' // run the container with the host network to be able to access the backend and frontend services, and run it as root to be able to write the test results in the workspace
+                }
+            }
+            steps {
+                dir('tests-perf') {                    
+                    sh 'k6 run script.js'
+                }
+            }
+            post {
+                always {
+                    publishHTML target: [
+                        reportDir: 'tests-perf',
+                        reportFiles: 'perf-results.html',
+                        reportName: 'Performance Tests Report',
+                    ]
+                }
+        }
     }
     post {
         always {
