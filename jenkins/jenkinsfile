@@ -68,6 +68,15 @@ pipeline {
                 }
             }
         }
+        stage('Launch Application') {
+            agent {
+                docker {
+                    image 'docker:24.0.5' // use the official docker image to run the docker commands
+                    reuseNode true
+                    args '-v /var/run/docker.sock:/var/run/docker.sock' // mount the docker socket to be able to run docker commands inside the container
+                }
+            }
+        }
     }
     post {
         always {
