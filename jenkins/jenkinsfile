@@ -71,10 +71,13 @@ pipeline {
         stage('Launch Application') {
             agent {
                 docker {
-                    image 'docker:24.0.5' // use the official docker image to run the docker commands
+                    image 'docker:27.5.1' 
                     reuseNode true
-                    args '-v /var/run/docker.sock:/var/run/docker.sock' // mount the docker socket to be able to run docker commands inside the container
+                    args '-v /var/run/docker.sock:/var/run/docker.sock -u 0' // mount the docker socket to be able to run docker commands inside the container
                 }
+            }
+            steps {
+                sh 'docker compose up --build -d '
             }
         }
     }
