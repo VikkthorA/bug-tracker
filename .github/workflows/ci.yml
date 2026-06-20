@@ -27,8 +27,8 @@ jobs:
           go test -json -coverprofile=coverage.out -covermode=atomic ./...
           go tool cover -func=coverage.out > coverage.txt
           
-          // Append the Go test coverage report to the GitHub Actions summary
-          echo "## Go Test Coverage report" >> $GITHUB_STEP_SUMMARY
+          # Append the Go test coverage report to the GitHub Actions summary
+          echo "## Go Test Coverage report" >> $GITHUB_STEP_SUMMARY 
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat coverage.txt >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
