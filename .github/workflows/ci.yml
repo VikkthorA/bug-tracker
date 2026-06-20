@@ -59,8 +59,15 @@ jobs:
       - name: Execute frontend unit tests
         working-directory: ./bugtracker-frontend
         run: |
-          npm install
-          npm test -- --watchAll=false
+          npm ci
+          npm test | tee full_output.txt
+
+          echo "## Frontend Unit Tests Output" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat full_output.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+
       - name: Publish Frontend Test Results
         uses: dorny/test-reporter@v1
         if: always()
